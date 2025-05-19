@@ -9,11 +9,11 @@ const PORT = process.env.PORT || 3000;
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
-// JSON Middleware
+// JSON middleware
 app.use(express.json());
 
-// Endpoints API
-app.get('/api/manifiestos', async (_, res) => {
+// Endpoints
+app.get('/api/manifiestos', async (_req, res) => {
   const { data, error } = await supabase
     .from('manifiestos')
     .select('*')
@@ -32,12 +32,10 @@ app.post('/api/manifiestos', async (req, res) => {
   res.status(201).json(data);
 });
 
-// Sirve el frontend React desde /build
-const FRONTEND_FOLDER = 'build';
-app.use(express.static(path.join(__dirname, FRONTEND_FOLDER)));
-app.get('*', (_req, res) =>
-  res.sendFile(path.join(__dirname, FRONTEND_FOLDER, 'index.html'))
+// Sirve React desde build/
+app.use(express.static(path.join(__dirname, 'build')));
+app.get('*', (_, res) =>
+  res.sendFile(path.join(__dirname, 'build', 'index.html'))
 );
 
-// Arranca el servidor
-app.listen(PORT, () => console.log(\`Server running on port \${PORT}\`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
